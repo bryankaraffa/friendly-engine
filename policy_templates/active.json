@@ -1,0 +1,19 @@
+{
+  "policies": [
+    {
+      "name": "Hello World",
+      "file_name": "policy_templates/hello_world/hello_world.pt",
+      "version": "0.1.0",
+      "change_log": "policy_templates/hello_world/CHANGELOG.md",
+      "description": "For testing purposes only",
+      "category": "Test",
+      "severity": "low",
+      "readme": "policy_templates/hello_world/README.md",
+      "provider": "Flexera",
+      "service": "Automation",
+      "policy_set": "Test",
+      "recommendation_type": null,
+      "updated_at": "2024-03-24T13:04:09Z"
+    }
+  ]
+}
