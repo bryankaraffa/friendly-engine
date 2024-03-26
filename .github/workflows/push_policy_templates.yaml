@@ -1,0 +1,37 @@
+name: Push Policy Templates
+on: [push]
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install fpt
+        run: |
+          curl -s https://binaries.rightscale.com/rsbin/fpt/v1/fpt-linux-amd64.tgz -o fpt.tgz
+          tar -zxf fpt.tgz
+          sudo cp ./fpt/fpt /usr/local/bin/fpt
+          sudo chmod +x /usr/local/bin/fpt
+          fpt --version
+
+      - name: Configure fpt
+        run: |
+          cat <<EOF> ~/.fpt.yml
+          login:
+            accounts:
+              "133896":
+                flexera: true
+                host: governance-3.rightscale.com
+                id: 133896
+                refresh_token: ${{ secrets.FLEXERA_REFRESH_TOKEN }}
+            default_account: "133896"
+          update:
+            check: true
+          EOF
+
+      - name: Upload Policy Templates
+        run: |
+          for pt in `find . -name *.pt`; do
+            fpt -a 133896 upload $pt
+          done

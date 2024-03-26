@@ -1,0 +1,58 @@
+name "Hello World -- Another Example"
+rs_pt_ver 20180301
+type "policy"
+short_description "A very simple policy template"
+category "Test"
+severity "low"
+default_frequency "weekly"
+info(
+  version: "0.1.0",
+  provider: "Flexera",
+  service: "Automation",
+  policy_set: "Test"
+)
+
+###############################################################################
+# Datasources
+###############################################################################
+
+datasource "ds_results" do
+  run_script $js_results
+end
+
+script "js_results", type: "javascript" do
+  result "results"
+  code <<-EOS
+var results = [];
+var d = new Date();
+var n = d.getHours();
+if (n % 2 == 1) {
+  msg = "The current hour is an odd number ("+d.toTimeString()+")"
+} else {
+  msg = "The current hour is an even number ("+d.toTimeString()+")"
+}
+// Print the message to log for debugging
+console.log(msg);
+// Add a successful result
+results.push(msg);
+  EOS
+end
+
+###############################################################################
+# Policy
+###############################################################################
+
+policy "policy" do
+  validate $ds_results do
+    summary_template "Hello World Incident Summary"
+    detail_template <<-EOS
+## Hello World!
+
+### Policy Evaluation Results
+{{range data}}
+{{.}}
+{{end}}
+EOS
+    check eq(size(data),0)
+  end
+end
