@@ -1,5 +1,9 @@
 name: Push Policy Templates
 on: [push]
+
+env:
+  FLEXERA_PROJECT_ID: 138205
+
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -20,12 +24,12 @@ jobs:
           cat <<EOF> ~/.fpt.yml
           login:
             accounts:
-              "133896":
+              "${{ env.FLEXERA_PROJECT_ID }}":
                 flexera: true
                 host: governance-3.rightscale.com
-                id: 133896
+                id: ${{ env.FLEXERA_PROJECT_ID }}
                 refresh_token: ${{ secrets.FLEXERA_REFRESH_TOKEN }}
-            default_account: "133896"
+            default_account: "${{ env.FLEXERA_PROJECT_ID }}"
           update:
             check: true
           EOF
@@ -33,5 +37,5 @@ jobs:
       - name: Upload Policy Templates
         run: |
           for pt in `find . -name *.pt`; do
-            fpt -a 133896 upload $pt
+            fpt -a ${{ env.FLEXERA_PROJECT_ID }} upload $pt
           done
